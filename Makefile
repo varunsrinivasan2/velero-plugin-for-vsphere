@@ -137,7 +137,8 @@ shell: build-dirs
 		-e GOPATH=/go \
 		-w /go/src/$(PKG) \
 		$(BUILDER_IMAGE) \
-		/bin/sh $(CMD)
+		/bin/sh -c "uname -a" \
+		 $(CMD)
 
 build-dirs:
 	@mkdir -p _output/bin/$(GOOS)/$(GOARCH)
