@@ -121,6 +121,7 @@ TTY := $(shell tty -s && echo "-t")
 shell: build-dirs
 	@echo "running docker: $@"
 	docker run \
+		--platform linux/amd64 \
 		-e GOFLAGS \
 		-i $(TTY) \
 		--rm \
@@ -137,8 +138,7 @@ shell: build-dirs
 		-e GOPATH=/go \
 		-w /go/src/$(PKG) \
 		$(BUILDER_IMAGE) \
-		/bin/sh -c "uname -a" \
-		 $(CMD)
+		/bin/sh $(CMD)
 
 build-dirs:
 	@mkdir -p _output/bin/$(GOOS)/$(GOARCH)
@@ -169,7 +169,7 @@ copy-install-script:
 
 build-container: copy-vix-libs container-name
 	cp $(DOCKERFILE) _output/bin/$(GOOS)/$(GOARCH)/$(DOCKERFILE)
-	docker build -t $(IMAGE):$(VERSION) -f _output/bin/$(GOOS)/$(GOARCH)/$(DOCKERFILE) _output
+	docker build --platform linux/amd64 -t $(IMAGE):$(VERSION) -f _output/bin/$(GOOS)/$(GOARCH)/$(DOCKERFILE) _output
 
 plugin-container: all copy-install-script
 	$(MAKE) build-container IMAGE=$(PLUGIN_IMAGE) DOCKERFILE=$(PLUGIN_DOCKERFILE) VERSION=$(VERSION)
